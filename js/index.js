@@ -1,110 +1,114 @@
-//!El programa permite cargar hasta 3 productos de los cuales se puede elegir entre: jabon - esponja - shampoo, luego calcula el impuesto y muestra el valor total del o los productos con el impuesto
+//!El programa es un carrito de compras, en el cual hay que ingresar el producto a comprar y te indica si esta disponible o no. Si el producto esta disponible se tiene que ingresar la cantidad a comprar y te avisa hay stock o no. Luego te devuelve el total de la compra cuando el usuario indica que no quiere seguir comprando.
 
-function calculoImpuesto(parametro){ //funcion para calcular el impuesto de los producto
-    const impuesto = 0.05 //es un 5% del valor producto
-    let valorimpuesto //creo una variable para que se almacene el valor del impuesto del producto
+let total = 0; // creo la variable global para poder mostrar el valor total cuando el usuario no quiera seguir comprando y la inicializo en 0 
 
-    valorimpuesto = parametro * impuesto //calculo cuanto es el impuesto
-    parametro = parametro + valorimpuesto //le sumo el impuesto al importe del producto
-    
-    return parametro //de vuelvo el valor del producto con el impuesto
+const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, precio, tipo y stock) para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
+    {
+        id: 1,
+        nombre: `jorgito`,
+        precio: 900,
+        tipo: `alfajores`,
+        stock: 1
+    },
+    {
+        id: 2,
+        nombre: `gomitas`,
+        precio: 3000,
+        tipo: `caramelos`,
+        stock: 0
+    },
+    {
+        id: 3,
+        nombre: `fantoche negro`,
+        precio: 700,
+        tipo: `alfajores`,
+        stock: 2
+    },
+    {
+        id: 4,
+        nombre: `flynn paff`,
+        precio: 2000,
+        tipo: `caramelos`,
+        stock: 3
+    },
+    {
+        id: 5,
+        nombre: `pico dulce`,
+        precio: 3800,
+        tipo: `caramelos`,
+        stock: 0
+    }
+]
+
+function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a elegir 
+    const PRODUCTOS_SECTION = document.getElementById('productos')
+    PRODUCTOS_SECTION.innerHTML = '' // limpia la pantalla al iniciar y cuando se elige un tipo de productos
+
+    FILTRADO_PRODUCTOS.forEach(producto =>{ // se usa un FOREACH para que se cree una tarjeta para cada objeto del array
+        const DIV_PRODUCT = document.createElement('div')
+        DIV_PRODUCT.className = 'contenedor'
+        DIV_PRODUCT.innerHTML = `
+            <h3>${producto.nombre}</h3>
+            <p>${producto.precio}</p>
+            <button id = 'cantidad'>Comprar</button>
+        `
+    PRODUCTOS_SECTION.appendChild(DIV_PRODUCT)
+    })
 }
 
-function valorTotal(parametro){ //funcion para calcular el valor total dependiendo de la cantidad de producto
-    parametro = parametro + aux //uso la variable aux para almacenar el valor anterior del producto y luego sumarselo al siguente
-    aux = parametro
-
-    return parametro
+function filtado(tipo){ //esta funcion filta los productos por determinado tipo 
+    let FILTRADO_PRODUCTOS;
+    if(tipo){
+        FILTRADO_PRODUCTOS = PRODUCTOS.filter(producto => producto.tipo === tipo) //se usa filter para que encuentre el tipo de producto y los devuelva en un array para poder mostrarlos en pantalla
+    }
+    else{
+        FILTRADO_PRODUCTOS = PRODUCTOS // sino encuentra el tipo o se preciona el boton "todos" muestra todos los productos
+    }
+    mostrar_prod(FILTRADO_PRODUCTOS)
 }
 
-let valorProducto //var designada para aplicarle el valor al producto
-let cantidad //variable para designar la cantidad de productos a comprar
-let aux = 0; // variable auxiliar para guardar el valor del producto cuando son mas de 1
+function eleccion(){ // la funcion sirve para que se elija el producto y la cantidad a comprar
+    let product = prompt("Ingrese el producto a comprar:").toLocaleLowerCase()
+    buscar(product) 
 
-console.log("Ingrese la cantidad de productos a comprar: ")
-cantidad = parseInt(prompt("Se puede comprar hasta 3 productos"))
-
-while(isNaN(cantidad) || cantidad > 3 || cantidad < 1){
-    console.log("Ingrese la cantidad de productos a comprar: ")
-    cantidad = parseInt(prompt("Se puede comprar hasta 3 productos"))
-}
-
-switch(cantidad){
-    case 1:
-        for(let i = 0; i<1; i++){
-            console.log("ingrese el producto a comprar: \njabon-esponja-shampoo")
-            producto = prompt()
-            if (producto == 'jabon'){
-                valorProducto = 3000
+    function buscar(product){ // esta funcion busca si el producto esta disponible y si se encuntra que especifique la cantidad
+        let BUSCADOR = PRODUCTOS.find(producto => producto.nombre.toLocaleLowerCase() === product) // uso FIND  para que encutre el producto y me lo devuelva el objeto completo y poder obtener el stock y precio
+        if (BUSCADOR){ 
+            let cantidad = parseInt(prompt('ingresar la cantidad:'))
+            if (cantidad > BUSCADOR.stock) {
+                console.log(`No hay suficiente stock. Stock disponible: ${BUSCADOR.stock}`);
+            }else{
+                let multiplicacion = cantidad * BUSCADOR.precio;
+                console.log(`El total es del producto ${multiplicacion}.`)
+                total += multiplicacion;
             }
-            else if(producto == 'esponja'){
-                valorProducto = 2000
-            }
-            else if(producto == 'shampoo'){
-                valorProducto = 4000
-            }
-            else{
-                alert("Ingresar un producto valido")
-                i-- // i = 0 para que vuelva a pedir el producto
-            }
+        }else {
+            console.log("Producto no encontrado.");
         }
-        console.log("El producto elegido es:\n", producto)
-        console.log("El valor del producto con el impuesto es: ", calculoImpuesto(valorProducto))
-        break;
-    case 2:
-        for(let i = 0; i<2; i++){
-            console.log("ingrese el producto a comprar: \njabon-esponja-shampoo")
-            producto = prompt()
-            if (producto == 'jabon'){
-                valorProducto = 3000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else if(producto == 'esponja'){
-                valorProducto = 2000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else if(producto == 'shampoo'){
-                valorProducto = 4000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else{
-                alert("Ingresar un producto valido")
-                i-- // le resto uno a i para que vuelva a hacer el for
-            } 
-        }
-        break;
-    case 3:
-        for(let i = 0; i<3; i++){
-            console.log("ingrese el producto a comprar: \njabon-esponja-shampoo")
-            producto = prompt()
-            if (producto == 'jabon'){
-                valorProducto = 3000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else if(producto == 'esponja'){
-                valorProducto = 2000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else if(producto == 'shampoo'){
-                valorProducto = 4000
-                valorTotal(calculoImpuesto(valorProducto))
-                console.log("El producto elegido es: ", producto)
-            }
-            else{
-                alert("Ingresar un producto valido")
-                i--
-            }
-            
-        }
-        break;
+        
+    }
+
 }
-if(cantidad == 2 || cantidad == 3){
-    console.log("El valor total de los producto es:",aux)
+
+document.getElementById('todos').addEventListener('click',()=>filtado(''))
+document.getElementById('caramelos').addEventListener('click',()=>filtado('caramelos'))
+document.getElementById('alfajores').addEventListener('click',()=>filtado('alfajores'))
+
+mostrar_prod(PRODUCTOS)
+
+eleccion()
+
+while(true){ //uso el while porque no se cuantas veces se quiere comprar
+    let continuar = prompt('¿Desea continuar comprando? si/no').toLocaleLowerCase()
+    if(continuar == 'si'){
+        eleccion()
+    }else{
+        console.log(`El total de la compra es: ${total}.`)
+        break
+    }
 }
+
+
+
 
 
