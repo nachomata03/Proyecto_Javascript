@@ -1,6 +1,10 @@
 //!El programa es un carrito de compras, en el cual hay que ingresar el producto a comprar y te indica si esta disponible o no. Si el producto esta disponible se tiene que ingresar la cantidad a comprar y te avisa hay stock o no. Luego te devuelve el total de la compra cuando el usuario indica que no quiere seguir comprando.
 
-let total = 0; // creo la variable global para poder mostrar el valor total cuando el usuario no quiera seguir comprando y la inicializo en 0 
+const CONTADOR = document.getElementById(`contador`)
+const SPAN_TOTAL = document.getElementById(`precio-total`)
+const SECCION = document.getElementById(`mostrarcart`)
+const UL = document.getElementById(`items-carrito`)
+
 
 const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, precio, tipo y stock) para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
     {
@@ -8,37 +12,73 @@ const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, 
         nombre: `jorgito`,
         precio: 900,
         tipo: `alfajores`,
-        stock: 1
+        stock: 1,
+        imagen: `../img/jorgito.png`,
+        cantidad: 0
     },
     {
         id: 2,
         nombre: `gomitas`,
         precio: 3000,
         tipo: `caramelos`,
-        stock: 0
+        stock: 0,
+        imagen: `../img/gomitasHuesos (1).png`,
+        cantidad: 1
     },
     {
         id: 3,
         nombre: `fantoche negro`,
         precio: 700,
         tipo: `alfajores`,
-        stock: 2
+        stock: 2,
+        imagen: `../img/fantoche_tripe_negro.png`,
+        cantidad: 0
     },
     {
         id: 4,
         nombre: `flynn paff`,
         precio: 2000,
         tipo: `caramelos`,
-        stock: 3
+        stock: 3,
+        imagen: `../img/flynnPaff.png`,
+        cantidad: 0
     },
     {
         id: 5,
         nombre: `pico dulce`,
         precio: 3800,
         tipo: `caramelos`,
-        stock: 0
+        stock: 0,
+        imagen: "../img/picoDulce.png",
+        cantidad: 0
     }
 ]
+
+const CARRITO =[];
+
+
+document.getElementById('todos').addEventListener('click',()=>filtado(''))
+document.getElementById('caramelos').addEventListener('click',()=>filtado('caramelos'))
+document.getElementById('alfajores').addEventListener('click',()=>filtado('alfajores'))
+
+mostrar_prod(PRODUCTOS)
+
+//!FUNCTIONS
+
+function filtado(tipo){ //esta funcion filta los productos por determinado tipo 
+    let FILTRADO_PRODUCTOS;
+
+    tipo ?  FILTRADO_PRODUCTOS = PRODUCTOS.filter(producto => producto.tipo === tipo) : FILTRADO_PRODUCTOS = PRODUCTOS
+
+    mostrar_prod(FILTRADO_PRODUCTOS)
+
+    /*
+    se usa filter para que encuentre el tipo de producto y los devuelva en un array para poder mostrarlos en pantalla
+    sino encuentra el tipo o se preciona el boton "todos" muestra todos los productos
+    */
+}
+
+//!MOSTRAR
 
 function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a elegir 
     const PRODUCTOS_SECTION = document.getElementById('productos')
@@ -48,26 +88,111 @@ function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a e
         const DIV_PRODUCT = document.createElement('div')
         DIV_PRODUCT.className = 'contenedor'
         DIV_PRODUCT.innerHTML = `
+            <img src ="${producto.imagen}" alt ="foto del producto ${producto.nombre}">
             <h3>${producto.nombre}</h3>
             <p>${producto.precio}</p>
-            <button id = 'cantidad'>Comprar</button>
+            <button onclick ="AgregarCarrito(${producto.id})" id ='cantidad'>Comprar</button> 
         `
     PRODUCTOS_SECTION.appendChild(DIV_PRODUCT)
     })
 }
 
-function filtado(tipo){ //esta funcion filta los productos por determinado tipo 
-    let FILTRADO_PRODUCTOS;
-    if(tipo){
-        FILTRADO_PRODUCTOS = PRODUCTOS.filter(producto => producto.tipo === tipo) //se usa filter para que encuentre el tipo de producto y los devuelva en un array para poder mostrarlos en pantalla
-    }
-    else{
-        FILTRADO_PRODUCTOS = PRODUCTOS // sino encuentra el tipo o se preciona el boton "todos" muestra todos los productos
-    }
-    mostrar_prod(FILTRADO_PRODUCTOS)
+
+
+function MostrarCart(){
+    UL.innerHTML=``    
+    CARRITO.forEach((producto,id) =>{
+        const LI = document.createElement(`li`)
+        LI.className=`prodCart`
+        LI.innerHTML = `
+            [${producto.cantidad}] ${producto.nombre} - ${producto.precio}
+            <button onclick="EliminarCarrito(${id})"> X </button>
+        `
+        UL.appendChild(LI)
+    })
 }
 
-function eleccion(){ // la funcion sirve para que se elija el producto y la cantidad a comprar
+
+function AgregarCarrito(id){
+    const PRODUCTO = PRODUCTOS.find(producto => producto.id === id);
+    //CARRITO.push(PRODUCTO)
+    console.log(CARRITO)
+    
+    
+    const PROD_CARRITO = CARRITO.find(product => product.id === id)
+
+    if(PROD_CARRITO){
+        ActualizarCantidad(PROD_CARRITO)
+        ActualizarCarrito()
+    }else{
+        CARRITO.push(PRODUCTO);
+        MostrarCart()
+    }
+
+    ActualizarContador()
+    ActualizarTotal()
+}
+
+
+function EliminarCarrito(id){
+    CARRITO.splice(id,1)
+    ActualizarContador()
+    ActualizarTotal()   
+    MostrarCart() 
+}
+
+function finalizarCompra(){
+    
+}
+//!ACTUALIZAR
+function ActualizarContador(){
+    CONTADOR.textContent = CARRITO.length
+}
+
+function ActualizarTotal(){
+    TOTAL = CARRITO.reduce((acumulador, producto) => acumulador + producto.precio, 0)
+    SPAN_TOTAL.textContent = TOTAL;
+}
+
+function altenarCarrito(){
+    SECCION.style.display = SECCION.style.display === `none` || SECCION.style.display ===`` ?  `block` : `none`
+} 
+
+function ActualizarCantidad(producto){
+
+    producto.forEach(product => product.cantidad++)
+}
+
+function ActualizarCarrito(){
+    const LI = document.getElementById(`prodCart`)
+    CARRITO.forEach(producto =>{
+        LI.textContent = `[${producto.cantidad}] ${producto.nombre} - ${producto.precio}`
+    })
+}
+
+
+/* function ActualizarCantidad(id){
+    const aux = PRODUCTOS.find(producto (id)=> {
+        producto.cantidad++
+    })
+} */
+
+// primero tengo que dicidir funciones:
+/*
+        finalizar la compra
+ */
+
+        /* while(true){ //uso el while porque no se cuantas veces se quiere comprar
+    mostrar_prod(PRODUCTOS)
+    let continuar = console.log('¿Desea continuar comprando? si/no')
+    if(continuar == 'si'){
+        eleccion()
+    }else{
+        console.log(`El total de la compra es: ${total}.`)
+        break
+    }
+}
+ *//* function eleccion(){ // la funcion sirve para que se elija el producto y la cantidad a comprar
     let product = prompt("Ingrese el producto a comprar:").toLocaleLowerCase()
     buscar(product) 
 
@@ -88,27 +213,4 @@ function eleccion(){ // la funcion sirve para que se elija el producto y la cant
         
     }
 
-}
-
-document.getElementById('todos').addEventListener('click',()=>filtado(''))
-document.getElementById('caramelos').addEventListener('click',()=>filtado('caramelos'))
-document.getElementById('alfajores').addEventListener('click',()=>filtado('alfajores'))
-
-mostrar_prod(PRODUCTOS)
-
-eleccion()
-
-while(true){ //uso el while porque no se cuantas veces se quiere comprar
-    let continuar = prompt('¿Desea continuar comprando? si/no').toLocaleLowerCase()
-    if(continuar == 'si'){
-        eleccion()
-    }else{
-        console.log(`El total de la compra es: ${total}.`)
-        break
-    }
-}
-
-
-
-
-
+} */

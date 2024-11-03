@@ -4,46 +4,110 @@
     box-sizing: border-box;
 }
 
-header nav div{
-    background-color: rgb(43, 250, 181);
-    color: rgb(88, 8, 8);
-    width: 100%;
-    height: 20vh;
-
+main{
+    height: 70vh;
 }
-nav div button{
+
+main h1{
+    text-align: center;
+}
+
+#botones div{
+    display: flex;
+    justify-content: space-around;
+}
+
+#botones div button{
     width: 100px;
     height: 30px;
 }
 
-main{
-    height: 45vh;
+
+
+i{
+    font-size: 2rem;
+    padding-top: 5px;
 }
-h1{
-    text-align: center;
+
+#Carrito{
+    margin: 5px;
+    display: flex;
+    justify-content: right;
+}
+
+#contenedorCarrito .icono{
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(1, 127, 211);
+}
+#contenedorCarrito .icono span{
+    position: absolute;
+    right: 0;
+    padding-right: 5px;
+}
+
+
+
+#mostrarcart{
+    border: 2px black solid;
+    display: none;
+    right: 0;
+    margin: 5px;
+    padding: 10px;
+    position: absolute;
+    background-color: #767e7e;
+}
+
+#items-carrito li{
+    list-style: none;
 }
 
 #productos{
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin: 20px;
 }
 
 #productos .contenedor{
     width: 200px;
-    height: 200px;
-    border: 5px solid #ff0000;
-}
+    height: 350px;
+    border: 5px solid #767e7e;
+    background-color: aqua;
 
-.contenedor{
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
 }
 
-footer div{
-    background-color: rgb(43, 250, 181);
-    width: 100%;
-    height: 35vh;
+#productos .contenedor h3{
+    font-size: 1.7rem;
+    padding: 0dvh;
 }
+
+#productos .contenedor img{
+    width: 100%;
+    height: 20vh;
+}
+
+#Formulario .contForm{
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+}
+
+#Formulario .contForm .parte1{
+    margin: 20px;
+    width: 50%;
+}
+#Formulario .contForm .parte2{
+    margin: 20px;
+    width: 50%;
+}
+
+#Formulario .contForm .parte2 .input-group textarea{
+    height: 152px;
+}
+
+
