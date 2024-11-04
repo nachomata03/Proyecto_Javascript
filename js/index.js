@@ -1,18 +1,16 @@
-//!El programa es un carrito de compras, en el cual hay que ingresar el producto a comprar y te indica si esta disponible o no. Si el producto esta disponible se tiene que ingresar la cantidad a comprar y te avisa hay stock o no. Luego te devuelve el total de la compra cuando el usuario indica que no quiere seguir comprando.
-
 const CONTADOR = document.getElementById(`contador`)
 const SPAN_TOTAL = document.getElementById(`precio-total`)
 const SECCION = document.getElementById(`mostrarcart`)
 const UL = document.getElementById(`items-carrito`)
 
 
-const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, precio, tipo y stock) para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
+const PRODUCTOS = [ //creo un array en el cual tiene varios objetos para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
     {
         id: 1,
         nombre: `jorgito`,
         precio: 900,
         tipo: `alfajores`,
-        stock: 1,
+        stock: 5,
         imagen: `../img/jorgito.png`,
         cantidad: 0
     },
@@ -21,7 +19,7 @@ const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, 
         nombre: `gomitas`,
         precio: 3000,
         tipo: `caramelos`,
-        stock: 0,
+        stock: 5,
         imagen: `../img/gomitasHuesos (1).png`,
         cantidad: 1
     },
@@ -30,7 +28,7 @@ const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, 
         nombre: `fantoche negro`,
         precio: 700,
         tipo: `alfajores`,
-        stock: 2,
+        stock: 5,
         imagen: `../img/fantoche_tripe_negro.png`,
         cantidad: 0
     },
@@ -48,13 +46,13 @@ const PRODUCTOS = [ //creo un array en el cual tiene varios objetos (productos, 
         nombre: `pico dulce`,
         precio: 3800,
         tipo: `caramelos`,
-        stock: 0,
+        stock: 5,
         imagen: "../img/picoDulce.png",
         cantidad: 0
     }
 ]
 
-const CARRITO =[];
+const CARRITO = JSON.parse(localStorage.getItem(`carrito`)) || [] // En esta variable obtengo el localstorage o sino hay nada inicia en vacio
 
 
 document.getElementById('todos').addEventListener('click',()=>filtado(''))
@@ -62,6 +60,12 @@ document.getElementById('caramelos').addEventListener('click',()=>filtado('caram
 document.getElementById('alfajores').addEventListener('click',()=>filtado('alfajores'))
 
 mostrar_prod(PRODUCTOS)
+
+document.addEventListener("DOMContentLoaded", () => { //esta funcion al cargar la pagina muestra los productos, total y contador que habia en el carrito del localstorage
+    MostrarCart();
+    ActualizarContador();
+    ActualizarTotal();
+});
 
 //!FUNCTIONS
 
@@ -97,120 +101,111 @@ function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a e
     })
 }
 
-
-
 function MostrarCart(){
-    UL.innerHTML=``    
-    CARRITO.forEach((producto,id) =>{
+    UL.innerHTML=``  //inicia el carrito en vacio para limpiarlo
+    CARRITO.forEach((producto,index) =>{ //En esta funcion muestra en el carrito los elementos seleccionados o los que se encontraban en localstorage
         const LI = document.createElement(`li`)
         LI.className=`prodCart`
         LI.innerHTML = `
-            [${producto.cantidad}] ${producto.nombre} - ${producto.precio}
-            <button onclick="EliminarCarrito(${id})"> X </button>
+            [${producto.cantidad}] ${producto.nombre} - ${producto.precio} C/U
+            <button onclick="EliminarCarrito(${index})"> X </button>
         `
         UL.appendChild(LI)
     })
 }
 
 
-function AgregarCarrito(id){
-    const PRODUCTO = PRODUCTOS.find(producto => producto.id === id);
-    //CARRITO.push(PRODUCTO)
-    console.log(CARRITO)
-    
-    
-    const PROD_CARRITO = CARRITO.find(product => product.id === id)
 
-    if(PROD_CARRITO){
-        ActualizarCantidad(PROD_CARRITO)
-        ActualizarCarrito()
-    }else{
-        CARRITO.push(PRODUCTO);
-        MostrarCart()
+//!FUNCIONTS CARRITO
+function AgregarCarrito(id){
+    const PRODUCTO = PRODUCTOS.find(producto => producto.id === id); //esta funcion sirve para buscar si se encuentra el producto en el array
+
+    const PROD_CARRITO = CARRITO.find(product => product.id === id) //esta funcion sirve para saber si el producto ya se encuentra en el carrito
+
+    if (PROD_CARRITO) { // si encuentra el producto en el carrito entra al if
+        if (PROD_CARRITO.cantidad < PRODUCTO.stock) {  // si la cantidad es menor al stock entra al if y aumenta la cantidad del producto
+                PROD_CARRITO.cantidad++;
+                Toastify({
+                    text: "Se agrego cantidad",
+                    duration: 1000,
+                    position: "left",
+                    gravity: "top",
+                    style:{
+                        background: "#5b5ba8"
+                    }
+                    }).showToast();
+        } else { // si la cantidad es mayor al stock muestra el mensaje
+            Swal.fire({
+                icon: "error",
+                title: "No Stock",
+                text: "No hay suficiente stock",
+            });
+        }
+    } else { // sino encuentra el prod en el carrito entra al else y agrega el prod al carrito
+            CARRITO.push({ ...PRODUCTO, cantidad: 1 });
+            Toastify({
+                text: "Producto agregado",
+                duration: 1000,
+                position: "right",
+                gravity: "top",
+                style:{
+                    background: "#ADADF3"
+                }
+                }).showToast();
     }
 
-    ActualizarContador()
-    ActualizarTotal()
+    localStorage.setItem(`carrito`, JSON.stringify(CARRITO)) // guardo los cambios del carrito en el localstorage
+
+    ActualizarContador();
+    ActualizarTotal();
+    MostrarCart();
 }
 
 
-function EliminarCarrito(id){
-    CARRITO.splice(id,1)
+function EliminarCarrito(index){ //elimina los productos del carrito
+    CARRITO.splice(index,1) //elimino el producto seleccionado del carrito
+    
+    localStorage.setItem(`carrito`, JSON.stringify(CARRITO)) //guardo los cambios en el localstorage
+    
     ActualizarContador()
     ActualizarTotal()   
     MostrarCart() 
 }
 
-function finalizarCompra(){
+function finalizarCompra(){ //se finaliza la compra
+    if(CARRITO.length == 0){ // si el carrito no tiene productos muestra la alerta
+        Swal.fire({
+            icon: "error",
+            title: "Producto no seleccionado",
+            text: "Por favor, seleccionar productos.",
+        });
+    }else{
+        Swal.fire({ // sino muestra el mensaje de exito y vacia el carrito y localstorage
+            icon: "success",
+            title: "Compra finalizada",
+            text: "La compra se realizo con exito.",
+        });
+        CARRITO.length = 0;
+
+        localStorage.setItem(`carrito`, JSON.stringify(CARRITO));
+
+        ActualizarContador();
+        ActualizarTotal();
+        MostrarCart();
+    }
     
 }
 //!ACTUALIZAR
-function ActualizarContador(){
-    CONTADOR.textContent = CARRITO.length
+function ActualizarContador(){ // actualiza el contador del carrito al sumar los productos en el carrito
+    CONTADOR.textContent = CARRITO.reduce((acumulador, producto) => acumulador + producto.cantidad, 0);
 }
 
-function ActualizarTotal(){
-    TOTAL = CARRITO.reduce((acumulador, producto) => acumulador + producto.precio, 0)
+function ActualizarTotal(){ //actualiza el total del carrito al sumar los precios de los productos por la cantidad que haya de este
+    const TOTAL = CARRITO.reduce((acumulador, producto) => acumulador + producto.precio * producto.cantidad, 0);
     SPAN_TOTAL.textContent = TOTAL;
 }
 
-function altenarCarrito(){
+function altenarCarrito(){ // esta funcion muestra o oculta el carrito al hacer click sobre la seccion
     SECCION.style.display = SECCION.style.display === `none` || SECCION.style.display ===`` ?  `block` : `none`
 } 
 
-function ActualizarCantidad(producto){
-
-    producto.forEach(product => product.cantidad++)
-}
-
-function ActualizarCarrito(){
-    const LI = document.getElementById(`prodCart`)
-    CARRITO.forEach(producto =>{
-        LI.textContent = `[${producto.cantidad}] ${producto.nombre} - ${producto.precio}`
-    })
-}
-
-
-/* function ActualizarCantidad(id){
-    const aux = PRODUCTOS.find(producto (id)=> {
-        producto.cantidad++
-    })
-} */
-
-// primero tengo que dicidir funciones:
-/*
-        finalizar la compra
- */
-
-        /* while(true){ //uso el while porque no se cuantas veces se quiere comprar
-    mostrar_prod(PRODUCTOS)
-    let continuar = console.log('¿Desea continuar comprando? si/no')
-    if(continuar == 'si'){
-        eleccion()
-    }else{
-        console.log(`El total de la compra es: ${total}.`)
-        break
-    }
-}
- *//* function eleccion(){ // la funcion sirve para que se elija el producto y la cantidad a comprar
-    let product = prompt("Ingrese el producto a comprar:").toLocaleLowerCase()
-    buscar(product) 
-
-    function buscar(product){ // esta funcion busca si el producto esta disponible y si se encuntra que especifique la cantidad
-        let BUSCADOR = PRODUCTOS.find(producto => producto.nombre.toLocaleLowerCase() === product) // uso FIND  para que encutre el producto y me lo devuelva el objeto completo y poder obtener el stock y precio
-        if (BUSCADOR){ 
-            let cantidad = parseInt(prompt('ingresar la cantidad:'))
-            if (cantidad > BUSCADOR.stock) {
-                console.log(`No hay suficiente stock. Stock disponible: ${BUSCADOR.stock}`);
-            }else{
-                let multiplicacion = cantidad * BUSCADOR.precio;
-                console.log(`El total es del producto ${multiplicacion}.`)
-                total += multiplicacion;
-            }
-        }else {
-            console.log("Producto no encontrado.");
-        }
-        
-    }
-
-} */
