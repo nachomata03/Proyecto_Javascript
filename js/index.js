@@ -4,7 +4,7 @@ const SECCION = document.getElementById(`mostrarcart`)
 const UL = document.getElementById(`items-carrito`)
 
 
-const PRODUCTOS = [ //creo un array en el cual tiene varios objetos para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
+/* const PRODUCTOS = [ //creo un array en el cual tiene varios objetos para asi poder acceder a este y filtrar el tipo de producto, encotrar si se encutra el producto, saber si tiene el stock y sumar el precio de los productos.
     {
         id: 1,
         nombre: `jorgito`,
@@ -50,7 +50,11 @@ const PRODUCTOS = [ //creo un array en el cual tiene varios objetos para asi pod
         imagen: "../img/picoDulce.png",
         cantidad: 0
     }
-]
+] */
+
+const url = `../datos.Json`
+
+fetch()
 
 const CARRITO = JSON.parse(localStorage.getItem(`carrito`)) || [] // En esta variable obtengo el localstorage o sino hay nada inicia en vacio
 

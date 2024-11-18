@@ -1,0 +1,47 @@
+[ 
+    {
+        "id": 1,
+        "nombre": "jorgito",
+        "precio": 900,
+        "tipo": "alfajores",
+        "stock": 5,
+        "imagen": "./img/jorgito.png",
+        "cantidad": 0
+    },
+    {
+        "id": 2,
+        "nombre": "gomitas",
+        "precio": 3000,
+        "tipo": "caramelos",
+        "stock": 5,
+        "imagen": "./img/gomitasHuesos (1).png",
+        "cantidad": 0
+    },
+    {
+        "id": 3,
+        "nombre": "fantoche negro",
+        "precio": 700,
+        "tipo": "alfajores",
+        "stock": 5,
+        "imagen": "./img/fantoche_tripe_negro.png",
+        "cantidad": 0
+    },
+    {
+        "id": 4,
+        "nombre": "flynn paff",
+        "precio": 2000,
+        "tipo": "caramelos",
+        "stock": 3,
+        "imagen": "./img/flynnPaff.png",
+        "cantidad": 0
+    },
+    {
+        "id": 5,
+        "nombre": "pico dulce",
+        "precio": 3800,
+        "tipo": "caramelos",
+        "stock": 5,
+        "imagen": "./img/picoDulce.png",
+        "cantidad": 0
+    }
+]
