@@ -4,7 +4,7 @@
         "nombre": "jorgito",
         "precio": 900,
         "tipo": "alfajores",
-        "stock": 5,
+        "stock": 0,
         "imagen": "./img/jorgito.png",
         "cantidad": 0
     },

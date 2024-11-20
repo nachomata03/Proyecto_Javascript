@@ -10,16 +10,22 @@ main{
 
 main h1{
     text-align: center;
+    margin: 10px;
+    margin-bottom: 15px
 }
 
 #botones div{
     display: flex;
     justify-content: space-around;
+    border-top: 1px black solid;
+    border-bottom: 1px black solid;
+    padding: 4px;
 }
 
 #botones div button{
+    background-color: #5b5ba8;
+    color: black;
     width: 100px;
-    height: 30px;
 }
 
 
@@ -39,11 +45,13 @@ i{
     display: flex;
     flex-direction: column;
     background-color:#ADADF3;
+    padding: 5px;
+    border-radius: 60px;
 }
 #contenedorCarrito .icono span{
     position: absolute;
     right: 0;
-    padding-right: 5px;
+    padding-right: 10px;
 }
 
 
@@ -67,6 +75,7 @@ i{
     justify-content: space-around;
     align-items: center;
     margin: 20px;
+    flex-wrap: wrap;
 }
 
 #productos .contenedor{
@@ -79,11 +88,12 @@ i{
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    margin: 10px;
 }
 
 #productos .contenedor h3{
     font-size: 1.7rem;
-    padding: 0dvh;
+    padding: 0vh;
 }
 
 #productos .contenedor img{
@@ -91,10 +101,13 @@ i{
     height: 20vh;
 }
 
+#Formulario #btnForm{
+    margin-left: 20px;
+}
+
 #Formulario .contForm{
     display: flex;
     flex-direction: row;
-    width: 70%;
 }
 
 #Formulario .contForm .parte1{
@@ -111,3 +124,22 @@ i{
 }
 
 
+@media screen and (max-width:750px) {
+    #Formulario .contForm{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #Formulario .contForm .parte1{
+        width: 70%;
+    }
+    #Formulario .contForm .parte2{
+        width: 70%;
+    }
+
+    #Formulario #btnForm{
+        display: inline;
+        display: flex;
+        justify-content: center;
+    }
+}

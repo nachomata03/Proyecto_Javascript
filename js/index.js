@@ -23,7 +23,25 @@ document.addEventListener("DOMContentLoaded", () => { //esta funcion al cargar l
     MostrarCart();
     ActualizarContador();
     ActualizarTotal();
+        
+        /* si el producto esta en el carrito btn.disabled = true  */
 });
+
+function actualizarbtn(indice){
+    //tenemos una funcion en la cual si en el carrito la cantidad = stock => disable = true
+    //tenemos otro que si el stock es igual a 0 => disable = false
+    //tenemos otro que busca si el producto esta en el carrito y sino lo encuentre (undefined) entonces disable = false
+    const PROD_CARRITO = CARRITO.find(product => product.id === indice)
+    CARRITO.forEach(producto => {
+        if(producto.stock == producto.cantidad ){
+            document.getElementById(`btn${producto.id}`).disabled = true
+        }
+        else if( (producto.cantidad < producto.stock || !PROD_CARRITO)){
+            document.getElementById(`btn${indice}`).disabled = false
+            console.log(indice)
+        }
+    })
+}
 
 //!FUNCTIONS
 
@@ -59,7 +77,7 @@ function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a e
             <img src ="${producto.imagen}" alt ="foto del producto ${producto.nombre}">
             <h3>${producto.nombre}</h3>
             <p>${producto.precio}</p>
-            <button onclick ="AgregarCarrito(${producto.id})" id ='cantidad'>Comprar</button> 
+            <button onclick ="AgregarCarrito(${producto.id})" id ='btn${producto.id}'>Comprar</button> 
         `
     PRODUCTOS_SECTION.appendChild(DIV_PRODUCT)
     })
@@ -102,12 +120,13 @@ function AgregarCarrito(id){
                                 background: "#5b5ba8"
                             }
                             }).showToast();
-                } else { // si la cantidad es mayor al stock muestra el mensaje
+                } else{ // si la cantidad es mayor al stock muestra el mensaje
                     Swal.fire({
                         icon: "error",
                         title: "No Stock",
                         text: "No hay suficiente stock",
                     });
+                    /* document.getElementById(`btn${PRODUCTO.id}`).disabled = true */
                 }
             } else { // sino encuentra el prod en el carrito entra al else y agrega el prod al carrito
                     CARRITO.push({ ...PRODUCTO, cantidad: 1 });
@@ -127,6 +146,7 @@ function AgregarCarrito(id){
             ActualizarContador();
             ActualizarTotal();
             MostrarCart();
+            actualizarbtn(id)
         })
         .catch(error => console.log(`Ocurrio un error al agregar al carrito`, error))
 }
@@ -136,10 +156,31 @@ function EliminarCarrito(index){ //elimina los productos del carrito
     CARRITO.splice(index,1) //elimino el producto seleccionado del carrito
     
     localStorage.setItem(`carrito`, JSON.stringify(CARRITO)) //guardo los cambios en el localstorage
+
+
+    /* const productoEliminado = CARRITO[index]; // Guarda el producto eliminado antes de eliminarlo
+    console.log(CARRITO)
+    fetch(`../datos.Json`)
+        .then(respuesta => respuesta.json())
+        .then(CARRITO => {
+            CARRITO.find(producto =>{ 
+
+                
+
+                const btn = document.getElementById(`btn${producto.id}`);
+                if (btn.disabled) {
+                    btn.disabled = false; // Rehabilita el botón
+                } })
+
+            })
+        
+        .catch(error => console.log(`Ocurrio un error al borrar un producto`, error))   */
     
+
     ActualizarContador()
     ActualizarTotal()   
     MostrarCart() 
+    actualizarbtn(index)
 }
 
 function finalizarCompra(){ //se finaliza la compra
