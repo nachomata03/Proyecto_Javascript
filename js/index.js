@@ -9,13 +9,21 @@ document.getElementById('todos').addEventListener('click',()=>filtado(''))
 document.getElementById('caramelos').addEventListener('click',()=>filtado('caramelos'))
 document.getElementById('alfajores').addEventListener('click',()=>filtado('alfajores'))
 
-async function obtenerProductos() {
-    const response = await fetch(`../datos.Json`)    
-    const PRODUCTOS = await response.json()
+document.getElementById("form").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-    mostrar_prod(PRODUCTOS)
-}
-
+    // guardo los datos en un objeto
+    const datosFormulario = {
+        nombre: document.getElementById("nombre").value,
+        apellido: document.getElementById("apellido").value,
+        mail: document.getElementById("mail").value,
+        comentario: document.getElementById("comentario").value,
+    };
+    // los guardo en localstorage
+    localStorage.setItem("datosFormulario", JSON.stringify(datosFormulario));
+    // muestro los datos
+    console.log(datosFormulario);
+});
 
 obtenerProductos()
 
@@ -23,25 +31,7 @@ document.addEventListener("DOMContentLoaded", () => { //esta funcion al cargar l
     MostrarCart();
     ActualizarContador();
     ActualizarTotal();
-        
-        /* si el producto esta en el carrito btn.disabled = true  */
 });
-
-function actualizarbtn(indice){
-    //tenemos una funcion en la cual si en el carrito la cantidad = stock => disable = true
-    //tenemos otro que si el stock es igual a 0 => disable = false
-    //tenemos otro que busca si el producto esta en el carrito y sino lo encuentre (undefined) entonces disable = false
-    const PROD_CARRITO = CARRITO.find(product => product.id === indice)
-    CARRITO.forEach(producto => {
-        if(producto.stock == producto.cantidad ){
-            document.getElementById(`btn${producto.id}`).disabled = true
-        }
-        else if( (producto.cantidad < producto.stock || !PROD_CARRITO)){
-            document.getElementById(`btn${indice}`).disabled = false
-            console.log(indice)
-        }
-    })
-}
 
 //!FUNCTIONS
 
@@ -65,6 +55,13 @@ function filtado(tipo){ //esta funcion filta los productos por determinado tipo
 
 //!MOSTRAR
 
+async function obtenerProductos() {//esta funcion obtiene los productos de la api y se los pasa a la funcion mostrar_prod para mostrarlos en pantalla
+    const response = await fetch(`../datos.Json`)    
+    const PRODUCTOS = await response.json()
+
+    mostrar_prod(PRODUCTOS)
+}
+
 function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a elegir 
 
     const PRODUCTOS_SECTION = document.getElementById('productos')
@@ -76,8 +73,8 @@ function mostrar_prod(FILTRADO_PRODUCTOS){ //la funcion muestra los producto a e
         DIV_PRODUCT.innerHTML = `
             <img src ="${producto.imagen}" alt ="foto del producto ${producto.nombre}">
             <h3>${producto.nombre}</h3>
-            <p>${producto.precio}</p>
-            <button onclick ="AgregarCarrito(${producto.id})" id ='btn${producto.id}'>Comprar</button> 
+            <p>$${producto.precio}</p>
+            <button onclick ="AgregarCarrito(${producto.id})" id ='btn${producto.id}' type="button" class="btn btn-dark">Comprar</button> 
         `
     PRODUCTOS_SECTION.appendChild(DIV_PRODUCT)
     })
@@ -90,7 +87,7 @@ function MostrarCart(){
         LI.className=`prodCart`
         LI.innerHTML = `
             [${producto.cantidad}] ${producto.nombre} - ${producto.precio} C/U
-            <button onclick="EliminarCarrito(${index})"> X </button>
+            <button onclick="EliminarCarrito(${index})" type="button" class="btn btn-danger"> X </button>
         `
         UL.appendChild(LI)
     })
@@ -129,16 +126,24 @@ function AgregarCarrito(id){
                     /* document.getElementById(`btn${PRODUCTO.id}`).disabled = true */
                 }
             } else { // sino encuentra el prod en el carrito entra al else y agrega el prod al carrito
-                    CARRITO.push({ ...PRODUCTO, cantidad: 1 });
-                    Toastify({
-                        text: "Producto agregado",
-                        duration: 1000,
-                        position: "right",
-                        gravity: "top",
-                        style:{
-                            background: "#ADADF3"
-                        }
-                        }).showToast();
+                    if(PRODUCTO.stock == 0){
+                        Swal.fire({
+                            icon: "error",
+                            title: "Producto sin stock",
+                            text: "No puedes agregar este producto.",
+                        });   
+                    }else{
+                        CARRITO.push({ ...PRODUCTO, cantidad: 1 });
+                        Toastify({
+                            text: "Producto agregado",
+                            duration: 1000,
+                            position: "right",
+                            gravity: "top",
+                            style:{
+                                background: "#ADADF3"
+                            }
+                            }).showToast();
+                    }
             }
 
             localStorage.setItem(`carrito`, JSON.stringify(CARRITO)) // guardo los cambios del carrito en el localstorage
@@ -153,34 +158,19 @@ function AgregarCarrito(id){
 
 
 function EliminarCarrito(index){ //elimina los productos del carrito
+    const productoEliminado = CARRITO[index]; // Guarda el producto antes de eliminarlo
+    
     CARRITO.splice(index,1) //elimino el producto seleccionado del carrito
     
     localStorage.setItem(`carrito`, JSON.stringify(CARRITO)) //guardo los cambios en el localstorage
-
-
-    /* const productoEliminado = CARRITO[index]; // Guarda el producto eliminado antes de eliminarlo
-    console.log(CARRITO)
-    fetch(`../datos.Json`)
-        .then(respuesta => respuesta.json())
-        .then(CARRITO => {
-            CARRITO.find(producto =>{ 
-
-                
-
-                const btn = document.getElementById(`btn${producto.id}`);
-                if (btn.disabled) {
-                    btn.disabled = false; // Rehabilita el botón
-                } })
-
-            })
-        
-        .catch(error => console.log(`Ocurrio un error al borrar un producto`, error))   */
     
 
     ActualizarContador()
     ActualizarTotal()   
     MostrarCart() 
-    actualizarbtn(index)
+    if (productoEliminado) { //al guardar el producto eliminado entra al if y le pasa el id
+        actualizarbtn(productoEliminado.id); // Actualiza el botón del producto eliminado
+    }
 }
 
 function finalizarCompra(){ //se finaliza la compra
@@ -199,10 +189,19 @@ function finalizarCompra(){ //se finaliza la compra
         CARRITO.length = 0;
 
         localStorage.setItem(`carrito`, JSON.stringify(CARRITO));
+        localStorage.removeItem("datosFormulario");
 
         ActualizarContador();
         ActualizarTotal();
         MostrarCart();
+        
+        // Habilita todos los botones
+        fetch('../datos.Json')
+            .then(respuesta => respuesta.json())
+            .then(PRODUCTOS => {
+                PRODUCTOS.forEach(producto => actualizarbtn(producto.id)); // itera sobre todos los productos para habilitar los botones
+            })
+            .catch(error => console.log("Error al habilitar los botones:", error));
     }
     
 }
@@ -219,4 +218,25 @@ function ActualizarTotal(){ //actualiza el total del carrito al sumar los precio
 function altenarCarrito(){ // esta funcion muestra o oculta el carrito al hacer click sobre la seccion
     SECCION.style.display = SECCION.style.display === `none` || SECCION.style.display ===`` ?  `block` : `none`
 } 
+
+function actualizarbtn(indice){ //esta funcion sirve para habilitar o deshabilitar los botones para agregar producto al carrito
+    const PROD_CARRITO = CARRITO.find(producto => producto.id === indice); // busco si el producto esta en el carrito
+    fetch('../datos.Json') 
+        .then(res => res.json())// obtengo la lista de productos para compararlo con el carrito
+        .then(PRODUCTOS => {
+            const PRODUCTO = PRODUCTOS.find(producto => producto.id === indice); //obtengo el objeto del producto seleccionado
+
+            const btn = document.getElementById(`btn${indice}`);
+            if (btn) {
+                if (PRODUCTO.stock === 0) {// Si no hay stock del producto seleccionado cargado en la lista, deshabilito el botón
+                    btn.disabled = true;
+                } else if (PROD_CARRITO && PROD_CARRITO.cantidad == PRODUCTO.stock) {// si el producto se encuentra en el carrito y la cantidad en el carrito es igual al stock, deshabilita el botón
+                    btn.disabled = true;
+                } else {// Habilita el botón si hay stock disponible
+                    btn.disabled = false;
+                }
+            }
+        })
+        .catch(error => console.log("Error al actualizar el botón:", error));
+}
 

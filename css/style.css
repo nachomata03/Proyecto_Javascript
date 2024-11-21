@@ -5,13 +5,28 @@
 }
 
 main{
-    height: 70vh;
+    height: 100%;
+    background: rgb(195,34,181);
+background: linear-gradient(180deg, rgba(195,34,181,1) 0%, rgba(126,31,177,1) 100%);
 }
 
-main h1{
+header{
+    background: rgb(195,34,181);
+    background: linear-gradient(0deg, rgba(195,34,181,1) 0%, rgba(126,31,177,1) 100%);
+}
+
+header img{
+    width: 150px;
+    height: 150px;
+}
+
+.divh1 h1{
     text-align: center;
-    margin: 10px;
-    margin-bottom: 15px
+    height: 15vh;
+    position: relative;
+    top: 20px;
+    text-shadow: 7px 7px 4px rgba(0,0,0,0.8);
+    color: white;
 }
 
 #botones div{
@@ -66,8 +81,26 @@ i{
     background-color: #ADADF3;
 }
 
+#mostrarcart h2{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bolder;
+}
+
 #items-carrito li{
     list-style: none;
+    margin-top: 5px;
+}
+
+#items-carrito li .btn-danger{
+    width: 35px;
+    height: 35px;
+}
+
+#mostrarcart p{
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: right;
 }
 
 #productos{
@@ -89,6 +122,13 @@ i{
     justify-content: space-around;
     align-items: center;
     margin: 10px;
+    transition: 0.7s;
+}
+
+#productos .contenedor:hover{
+    -webkit-box-shadow: 12px 7px 20px -4px rgba(0,0,0,0.75);
+    -moz-box-shadow: 12px 7px 20px -4px rgba(0,0,0,0.75);
+    box-shadow: 12px 7px 20px -4px rgba(0,0,0,0.75);
 }
 
 #productos .contenedor h3{
@@ -101,8 +141,15 @@ i{
     height: 20vh;
 }
 
+#productos .contenedor p{
+    font-size: 1rem;
+    font-weight: bold
+}
+
 #Formulario #btnForm{
     margin-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 #Formulario .contForm{
@@ -111,17 +158,20 @@ i{
 }
 
 #Formulario .contForm .parte1{
-    margin: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
     width: 50%;
 }
 #Formulario .contForm .parte2{
-    margin: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
     width: 50%;
 }
 
 #Formulario .contForm .parte2 .input-group textarea{
     height: 152px;
 }
+
 
 
 @media screen and (max-width:750px) {
